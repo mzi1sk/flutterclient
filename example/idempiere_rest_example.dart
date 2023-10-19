@@ -3,10 +3,10 @@ import 'package:test/test.dart';
 
 void main() async {
   // instantiate the singleton idempiere client with the API url
-  IdempiereClient().setBaseUrl("https://mundodocafe.brerp.cloud/api/v1");
+  IdempiereClient().setBaseUrl("https://dev.idempiere.sk/api/v1");
   // do the first token request
   LoginResponse login = await IdempiereClient()
-      .login("/auth/tokens", "superuser @ brerp.com.br", "cafe123");
+      .login("/auth/tokens", "api_test", "api_test_idempiere");
 
   //using the first client id in loginresponse (just for example purposes)
   int clientId = login.clients.first.id!;
@@ -20,7 +20,7 @@ void main() async {
   //using the first org id in orgs (just for example purporses)
   int orgId = orgs.first.id!;
   List<Warehouse> warehouses =
-      await IdempiereClient().getWarehouses(clientId, roleId, orgId);
+  await IdempiereClient().getWarehouses(clientId, roleId, orgId);
 
   //using the first warehouseId in warehouses (just for example purposes)
   int whId = warehouses.first.id!;
@@ -30,13 +30,14 @@ void main() async {
       "/auth/tokens", login.token, login.clients.first.id!, roleId,
       organizationId: orgId, warehouseId: whId);
 
+
   FilterBuilder filter = FilterBuilder();
   filter
-      .addFilter('C_BP_Group_ID', Operators.eq, 1000000)
-      .and()
-      .addFilter('COF_SituacaoComercial', Operators.eq, 'PA')
-      .and()
-      .addFilter('lbr_IE', Operators.contains, '1');
+      .addFilter('C_BP_Group_ID', Operators.eq, 1000000);
+      //.and()
+      //.addFilter('COF_SituacaoComercial', Operators.eq, 'PA')
+      //.and()
+      //.addFilter('isActive', Operators.contains, 'Y');
 
   ExpandBuilder expand = ExpandBuilder();
 
@@ -54,7 +55,7 @@ void main() async {
       "/models/c_bpartner", (json) => MBPartner(json),
       filter: filter,
       expand: expand,
-      orderBy: ['COF_SituacaoComercial', 'Name'],
+      orderBy: [ 'Name'],
       select: ['Name', 'Name2'],
       top: 10,
       skip: 2,

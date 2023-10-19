@@ -10,9 +10,9 @@ import 'package:test/test.dart';
 
 void main() {
   group('Idempiere Rest - Simple Test Suite', () {
-    String login = "superuser @ brerp.com.br";
-    String password = "cafe123";
-    IdempiereClient().setBaseUrl("https://mundodocafe.brerp.cloud/api/v1");
+    String login = "api_test";
+    String password = "api_test_idempiere";
+    IdempiereClient().setBaseUrl("https://dev.idempiere.sk/api/v1");
     late LoginResponse response;
     late int roleId;
     late int adOrgId;
@@ -64,11 +64,11 @@ void main() {
     test('Get Records', () async {
       FilterBuilder filter = FilterBuilder();
       filter
-          .addFilter('C_BP_Group_ID', Operators.eq, 1000000)
-          .and()
-          .addFilter('COF_SituacaoComercial', Operators.eq, 'PA')
-          .and()
-          .addFilter('lbr_IE', Operators.contains, '1');
+          .addFilter('C_BP_Group_ID', Operators.eq, 1000000);
+         // .and()
+          //.addFilter('COF_SituacaoComercial', Operators.eq, 'PA')
+          //.and()
+          //.addFilter('IsActive', Operators.eq, 'Y');
 
       ExpandBuilder expand = ExpandBuilder();
 
@@ -80,16 +80,16 @@ void main() {
           filter: childFilter,
           orderBy: ['Name', 'EMail'],
           top: 10,
-          skip: 5);
+          skip: 0);
 
       List<TestModel> records = await IdempiereClient().get<TestModel>(
           "/models/c_bpartner", (json) => TestModel(json),
           filter: filter,
           expand: expand,
-          orderBy: ['COF_SituacaoComercial', 'Name'],
+          orderBy: [ 'Name'],
           select: ['Name', 'Name2'],
           top: 10,
-          skip: 2,
+          skip: 0,
           showsql: true);
       expect(records.isNotEmpty, isTrue);
     });
@@ -98,9 +98,9 @@ void main() {
 
     test('Get Record', () async {
       TestModel? record = await IdempiereClient().getRecord<TestModel>(
-          "/models/c_bpartner", 1000001, (json) => TestModel(json));
+          "/models/c_bpartner", 1000002, (json) => TestModel(json));
 
-      expect(record!.id, 1000001);
+      expect(record!.id, 1000002);
     });
 
     test('Post Record', () async {
